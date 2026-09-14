@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_test_quality.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_tdd.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_plan_drift.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_context_budget.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
