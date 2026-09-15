@@ -61,48 +61,37 @@ als alles neu schreiben zu lassen.
 
 ### Voraussetzungen
 
-Auf deinem Rechner muss installiert sein:
+Waehle einen Weg. Einzelheiten stehen in der [README](../README.md#schnellstart).
 
-| Programm | Wofuer | Download |
-|---|---|---|
-| Git | Vorlagen herunterladen, Projekt versionieren | <https://git-scm.com> |
-| Node.js 22 oder neuer | Die App bauen und starten. Bringt `npm` mit. | <https://nodejs.org> |
-| Codex CLI | Der Agent. Einmal anmelden. | <https://github.com/openai/codex> |
+**Eigener Rechner.** Im Ordner `scratchpad`:
 
-Pruefe im Terminal. Jede Zeile muss eine Versionsnummer zeigen:
+| System | Befehl |
+|---|---|
+| Windows | `.\setup.cmd codex` |
+| Mac oder Linux | `bash setup.sh codex` |
 
-```text
-git --version
-node --version
-npm --version
-codex --version
-```
+**Pruefe:** Am Ende steht „Alles bereit“. Sonst steht dort, was fehlt. Danach ein neues
+Terminal oeffnen.
+
+**Dev Container oder Codespaces.** Alles ist schon installiert. Oeffne das Repo im
+Container und nimm dort das Terminal.
 
 ### Projekt anlegen
 
-Windows:
+Im Ordner `scratchpad`. Unter Mac und Linux heisst der erste Befehl `python3` statt
+`python`:
 
 ```text
-powershell -ExecutionPolicy Bypass -File C:\source\scratchpad\install.ps1 C:\projekte\task-board codex
-cd C:\projekte\task-board
-git init
+python start.py codex
+cd task-board
 codex
 ```
 
-Mac oder Linux:
-
-```text
-bash ~/scratchpad/install.sh ~/projekte/task-board codex
-cd ~/projekte/task-board
-git init
-codex
-```
-
-- Zeile 1 legt den Projektordner an und kopiert die Anleitungen fuer Codex hinein. Die
-  Datei `AGENTS.md` erklaert Codex die Woerter `Brainstorm:`, `Referenzen:`, `Plane:` und
-  `Baue:`.
-- Zeile 3 macht den Ordner zu einem Git-Projekt.
-- Zeile 4 startet Codex.
+- Zeile 1 legt den Ordner `task-board` an, kopiert die Anleitungen fuer Codex hinein und
+  macht ihn zu einem Git-Projekt. Die Datei `AGENTS.md` erklaert Codex die Woerter
+  `Brainstorm:`, `Referenzen:`, `Plane:` und `Baue:`.
+- Zeile 2 wechselt in den Projektordner.
+- Zeile 3 startet Codex. Beim ersten Start meldest du dich einmal an.
 
 **Wichtig:** Bleib von Schritt 1 bis Schritt 3 im selben Chat. Codex weiss nur, was im
 aktuellen Chat besprochen wurde.

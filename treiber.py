@@ -38,6 +38,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -194,7 +195,14 @@ class Treiber:
 
     # -- Sitzungs-Start (echt) -------------------------------------------------
     def _echter_start(self, prompt, env):
-        cmd = build_kommando(prompt, self.modell, self.claude_bin)
+        # shutil.which beachtet unter Windows PATHEXT und findet so auch claude.cmd;
+        # subprocess allein sucht nur nach .exe und bricht mit FileNotFoundError ab.
+        claude = shutil.which(self.claude_bin)
+        if claude is None:
+            self._log("claude-CLI nicht gefunden: %s (PATH pruefen oder --claude PFAD)."
+                      % self.claude_bin)
+            return 127
+        cmd = build_kommando(prompt, self.modell, claude)
         os.makedirs(self.state_dir, exist_ok=True)
         with open(self._pfad(LOG_NAME), "a", encoding="utf-8") as log:
             proc = subprocess.run(cmd, cwd=self.projekt, env=env,

@@ -1,0 +1,64 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    name: tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.13"]
+        include:
+          - os: ubuntu-latest
+            python: "3.9"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Installer
+        run: python test_install.py
+      - name: Treiber
+        run: python test_treiber.py
+      - name: Waechter
+        shell: bash
+        run: for t in hooks/test_*.py; do echo "== $t"; python "$t" || exit 1; done
+
+  setup:
+    name: setup (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: shellcheck
+        if: runner.os == 'Linux'
+        run: shellcheck setup.sh
+      - name: setup.sh beide
+        if: runner.os != 'Windows'
+        run: bash setup.sh beide
+      - name: setup.cmd beide
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: setup.cmd beide
+
+  devcontainer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Image bauen
+        run: docker build -t scratchpad-dev .devcontainer
+      - name: Voraussetzungen und Installer im Container
+        run: >
+          docker run --rm -v "$PWD:/src:ro" scratchpad-dev
+          bash -c "cp -r /src /tmp/repo && cd /tmp/repo && bash setup.sh pruefen && python test_install.py"

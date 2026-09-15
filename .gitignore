@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 
 .claude/state/
+
+# Uebungsprojekt, das start.py anlegt (eigenes Git-Projekt)
+task-board/

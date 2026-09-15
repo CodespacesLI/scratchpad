@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_test_quality.py\""
+            "command": "for p in python3 python; do \"$p\" -c '' 2>/dev/null && exec \"$p\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_test_quality.py\"; done; echo 'scratchpad: kein lauffaehiges Python (python3/python) gefunden' >&2; exit 1"
           }
         ]
       }
@@ -16,15 +16,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_tdd.py\""
+            "command": "for p in python3 python; do \"$p\" -c '' 2>/dev/null && exec \"$p\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_tdd.py\"; done; echo 'scratchpad: kein lauffaehiges Python (python3/python) gefunden' >&2; exit 1"
           },
           {
             "type": "command",
-            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_plan_drift.py\""
+            "command": "for p in python3 python; do \"$p\" -c '' 2>/dev/null && exec \"$p\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_plan_drift.py\"; done; echo 'scratchpad: kein lauffaehiges Python (python3/python) gefunden' >&2; exit 1"
           },
           {
             "type": "command",
-            "command": "\"$(command -v python3 || command -v python)\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_context_budget.py\""
+            "command": "for p in python3 python; do \"$p\" -c '' 2>/dev/null && exec \"$p\" \"${CLAUDE_PROJECT_DIR:-.}/<AGENTENORDNER>/hooks/guard_context_budget.py\"; done; echo 'scratchpad: kein lauffaehiges Python (python3/python) gefunden' >&2; exit 1"
           }
         ]
       }

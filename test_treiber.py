@@ -189,6 +189,14 @@ def test_kommando_bau():
     check("Modell gesetzt", "--model" in cmd and "opus" in cmd)
 
 
+def test_fehlendes_cli():
+    print("Fehlt das claude-CLI, meldet der Starter Exit 127 statt abzustuerzen:")
+    with tempfile.TemporaryDirectory() as projekt:
+        t = treiber.Treiber(projekt, "x", claude_bin="gibt-es-nicht-scratchpad",
+                            log=lambda msg: None)
+        check("Exit 127", t._echter_start("prompt", dict(os.environ)) == 127)
+
+
 def test_cli_parser():
     print("CLI: auto/status/stopp werden geparst:")
     p = treiber.build_parser()
@@ -204,7 +212,7 @@ def main():
                  test_not_aus_stoppdatei, test_stillstand_brief_unveraendert,
                  test_fehler_abbruch, test_runden_limit,
                  test_alt_signale_werden_geraeumt, test_sitzungs_umgebung,
-                 test_kommando_bau, test_cli_parser):
+                 test_kommando_bau, test_fehlendes_cli, test_cli_parser):
         test()
     if FEHLER:
         print("\nFEHLGESCHLAGEN: %d Pruefung(en): %s" % (len(FEHLER), ", ".join(FEHLER)))

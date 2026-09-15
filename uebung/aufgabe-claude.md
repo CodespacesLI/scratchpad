@@ -60,51 +60,36 @@ als alles neu schreiben zu lassen.
 
 ### Voraussetzungen
 
-Auf deinem Rechner muss installiert sein:
+Waehle einen Weg. Einzelheiten stehen in der [README](../README.md#schnellstart).
 
-| Programm | Wofuer | Download |
-|---|---|---|
-| Git | Vorlagen herunterladen, Projekt versionieren | <https://git-scm.com> |
-| Node.js 22 oder neuer | Die App bauen und starten. Bringt `npm` mit. | <https://nodejs.org> |
-| Python 3 | Nur fuer den Installer | <https://www.python.org> |
-| Claude Code | Der Agent. Einmal anmelden. | <https://claude.com/claude-code> |
+**Eigener Rechner.** Im Ordner `scratchpad`:
 
-Pruefe im Terminal. Jede Zeile muss eine Versionsnummer zeigen:
+| System | Befehl |
+|---|---|
+| Windows | `.\setup.cmd claude` |
+| Mac oder Linux | `bash setup.sh claude` |
 
-```text
-git --version
-node --version
-npm --version
-python --version
-claude --version
-```
+**Pruefe:** Am Ende steht „Alles bereit“. Sonst steht dort, was fehlt. Danach ein neues
+Terminal oeffnen.
 
-Unter Windows: Oeffnet `python --version` den Microsoft Store, ist Python nicht wirklich
-installiert. Installiere es dann von python.org.
+**Dev Container oder Codespaces.** Alles ist schon installiert. Oeffne das Repo im
+Container und nimm dort das Terminal.
 
 ### Projekt anlegen
 
-Windows:
+Im Ordner `scratchpad`. Unter Mac und Linux heisst der erste Befehl `python3` statt
+`python`:
 
 ```text
-powershell -ExecutionPolicy Bypass -File C:\source\scratchpad\install.ps1 C:\projekte\task-board claude
-cd C:\projekte\task-board
-git init
+python start.py claude
+cd task-board
 claude
 ```
 
-Mac oder Linux:
-
-```text
-bash ~/scratchpad/install.sh ~/projekte/task-board claude
-cd ~/projekte/task-board
-git init
-claude
-```
-
-- Zeile 1 legt den Projektordner an und kopiert die Anleitungen fuer Claude hinein.
-- Zeile 3 macht den Ordner zu einem Git-Projekt.
-- Zeile 4 startet Claude.
+- Zeile 1 legt den Ordner `task-board` an, kopiert die Anleitungen fuer Claude hinein und
+  macht ihn zu einem Git-Projekt.
+- Zeile 2 wechselt in den Projektordner.
+- Zeile 3 startet Claude. Beim ersten Start meldest du dich einmal an.
 
 **Wichtig:** Bleib von Schritt 1 bis Schritt 3 im selben Chat. Claude weiss nur, was im
 aktuellen Chat besprochen wurde.

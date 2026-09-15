@@ -28,6 +28,7 @@ Datei bleibt unangetastet.
 
 import copy
 import json
+import re
 import sys
 
 
@@ -68,6 +69,15 @@ def _befehle(eintrag):
         for h in eintrag.get("hooks", [])
         if isinstance(h, dict)
     ]
+
+
+_SKRIPT_RE = re.compile(r"([^/\"'\s]+/hooks/[^/\"'\s]+\.py)")
+
+
+def _skript(hook):
+    """Das Harness-Skript eines Hook-Befehls (z.B. `.claude/hooks/guard_tdd.py`)."""
+    treffer = _SKRIPT_RE.search(str(hook.get("command", "")))
+    return treffer.group(1) if treffer else None
 
 
 def merge_hooks(ziel, quelle):
@@ -115,7 +125,17 @@ def merge_hooks(ziel, quelle):
                     continue
                 if json.dumps(hook, sort_keys=True) in vorhandene_befehle:
                     continue
-                treffer.setdefault("hooks", []).append(copy.deepcopy(hook))
+                # Ein aelterer Befehl fuer dasselbe Waechter-Skript wird an seiner
+                # Stelle ersetzt statt verdoppelt — sonst liefe jeder Waechter nach
+                # einem Update zweimal.
+                liste = treffer.setdefault("hooks", [])
+                skript = _skript(hook)
+                alt = next((i for i, h in enumerate(liste)
+                            if skript and isinstance(h, dict) and _skript(h) == skript), None)
+                if alt is None:
+                    liste.append(copy.deepcopy(hook))
+                else:
+                    liste[alt] = copy.deepcopy(hook)
                 geaendert = True
 
     return geaendert

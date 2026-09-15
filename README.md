@@ -1,21 +1,90 @@
 # scratchpad
 
-Arbeitsanleitungen fuer KI-gestuetzte Programmieraufgaben.
+Arbeitsanleitungen fuer KI-gestuetzte Programmieraufgaben, mit einer fertigen Uebung
+(Task-Board) fuer Claude Code und Codex.
 
-## Voraussetzungen
+## Schnellstart
 
-| Programm | Noetig fuer |
+Es gibt drei Wege. Alle enden am selben Punkt: ein Terminal, in dem ein Befehl das
+Uebungsprojekt anlegt.
+
+| Weg | Du brauchst | Geeignet, wenn |
+|---|---|---|
+| **A: Eigener Rechner** | Nichts, `setup` installiert den Rest | Du Programme installieren darfst |
+| **B: Dev Container** | Docker und VS Code (oder Cursor, JetBrains) | Du nichts lokal installieren willst oder darfst |
+| **C: GitHub Codespaces** | Nur einen Browser und ein GitHub-Konto | Auf deinem Rechner gar nichts geht |
+
+### Weg A: Eigener Rechner
+
+**1. Repo holen:** `git clone https://github.com/CodespacesLI/scratchpad.git` oder auf
+GitHub „Code“ → „Download ZIP“ und entpacken.
+
+**2. Voraussetzungen installieren.** Im Ordner `scratchpad`:
+
+| System | Befehl |
 |---|---|
-| Git | `/ref` und das Zielprojekt |
-| Node.js 22 oder neuer (mit `npm`) | Die Uebungs-App bauen und testen |
-| Python 3 | Installer im Modus `claude` |
-| Claude Code oder Codex CLI | Der Agent |
+| Windows | `.\setup.cmd claude` |
+| macOS oder Linux | `bash setup.sh claude` |
 
-## Installation
+Statt `claude` geht auch `codex` oder `beide`. Mit `pruefen` wird nur geprueft und nichts
+installiert. Am Ende steht „Alles bereit“ oder eine Liste, was fehlt. Danach **ein neues
+Terminal oeffnen**, damit die neuen Programme gefunden werden.
+
+**3. Uebungsprojekt anlegen und Agent starten:**
+
+| System | Befehle |
+|---|---|
+| Windows | `python start.py claude`, dann `cd task-board`, dann `claude` |
+| macOS oder Linux | `python3 start.py claude`, dann `cd task-board`, dann `claude` |
+
+### Weg B: Dev Container (Docker)
+
+Voraussetzung: [Docker Desktop](https://www.docker.com/products/docker-desktop/) und VS
+Code mit der Erweiterung „Dev Containers“.
+
+1. Den Ordner `scratchpad` in VS Code oeffnen und „Reopen in Container“ waehlen (oder F1 →
+   „Dev Containers: Reopen in Container“). Der erste Start baut das Image und dauert
+   einige Minuten.
+2. Im Terminal von VS Code: `python start.py claude`, dann `cd task-board`, dann `claude`.
+3. Beim ersten Start einmal anmelden. Der Login bleibt auch nach einem Neubau des
+   Containers erhalten.
+
+Im Container sind Node.js 22, Git, Python, Claude Code, Codex und die Systempakete fuer
+Playwright vorinstalliert. `npm run dev` wird automatisch weitergeleitet und ist unter
+<http://localhost:5173> erreichbar.
+
+**Tipp fuer Windows:** `npm install` ist in einem eingebundenen Windows-Ordner langsam.
+Schneller geht es mit F1 → „Dev Containers: Clone Repository in Container Volume“ und der
+Repo-Adresse.
+
+### Weg C: GitHub Codespaces
+
+Auf der GitHub-Seite des Repos: „Code“ → „Codespaces“ → „Create codespace“. Das startet
+denselben Container wie Weg B im Browser. Weiter wie bei Weg B ab Schritt 2. Die Adresse
+der laufenden App steht im Reiter „Ports“.
+
+## Voraussetzungen im Detail
+
+`setup` installiert alles, was fehlt. Diese Tabelle ist nur fuer den Fall, dass du von
+Hand installierst.
+
+| Programm | Noetig fuer | `setup` installiert ueber |
+|---|---|---|
+| Git | `/ref` und das Projekt. Unter Windows bringt es die Git Bash mit, die Claude Code braucht. | winget, brew, apt oder dnf |
+| Node.js 22 oder neuer (mit `npm`) | Die Uebungs-App bauen und testen | winget, brew, NodeSource |
+| Python 3.9 oder neuer | Installer und die Hooks im Modus `claude` | winget, brew, apt oder dnf |
+| Claude Code oder Codex CLI | Der Agent | offizieller Installer (Claude), npm (Codex) |
+
+Unter Windows heisst der Befehl `python`, unter macOS und Linux `python3`. Oeffnet
+`python` unter Windows den Microsoft Store, ist Python nicht wirklich installiert. `setup`
+erkennt das.
+
+## In ein eigenes Projekt installieren
+
+`start.py` ist die Abkuerzung fuer die Uebung. Fuer jedes andere Projekt:
 
 ```text
-powershell -ExecutionPolicy Bypass -File C:\source\scratchpad\install.ps1 C:\projekte\mein-projekt <modus>
-bash /c/source/scratchpad/install.sh ~/projekte/mein-projekt <modus>
+python install.py <pfad-zum-projekt> [neutral|codex|claude]
 ```
 
 | Modus | Installierte Inhalte |
@@ -24,7 +93,8 @@ bash /c/source/scratchpad/install.sh ~/projekte/mein-projekt <modus>
 | `codex` | Neutraler Kern, Skills unter `.agents/skills/` und ein Scratchpad-Block in `AGENTS.md`. |
 | `claude` | Claude-Commands, Skills, Hooks und Einstellungen unter `.claude/`. |
 
-Ohne `<modus>` fragt der Installer nach der Auswahl. Pro Zielprojekt wird ein Modus installiert.
+Ohne Modus fragt der Installer nach der Auswahl. Pro Zielprojekt wird ein Modus
+installiert. Ein zweiter Lauf aktualisiert die Dateien, ohne etwas doppelt einzutragen.
 
 ## Wichtige Pfade
 
@@ -71,8 +141,13 @@ Die fachliche Uebung ist in beiden Modi gleich. Die Arbeitsblaetter unterscheide
 
 Quality Gate mit Playwright ist optional. Es wird nur nach dem Bau ausgefuehrt, wenn Zeit vorhanden ist.
 
-## Installer-Tests
+## Tests
 
 ```text
-bash test_install.sh
+python test_install.py
+python test_treiber.py
+python hooks/test_guard_tdd.py        (ebenso die anderen hooks/test_*.py)
 ```
+
+GitHub Actions fuehrt alle Tests unter Windows, macOS und Linux aus, dazu `setup` auf allen
+drei Systemen und den Bau des Dev Containers (`.github/workflows/tests.yml`).
