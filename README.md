@@ -10,9 +10,9 @@ Uebungsprojekt anlegt.
 
 | Weg | Du brauchst | Geeignet, wenn |
 |---|---|---|
-| **A: Eigener Rechner** | Nichts, `setup` installiert den Rest | Du Programme installieren darfst |
-| **B: Dev Container** | Docker und VS Code (oder Cursor, JetBrains) | Du nichts lokal installieren willst oder darfst |
-| **C: GitHub Codespaces** | Nur einen Browser und ein GitHub-Konto | Auf deinem Rechner gar nichts geht |
+| **A: Eigener Rechner** | Nichts, `setup` installiert den Rest. Unter Windows ohne Admin-Rechte. | Du Programme in deinem Benutzerordner starten darfst |
+| **B: Dev Container** | Docker und VS Code (oder Cursor, JetBrains). Docker zu installieren braucht Admin-Rechte. | Docker schon da ist und du lokal nichts sonst installieren willst |
+| **C: GitHub Codespaces** | Nur einen Browser und ein GitHub-Konto | Auf deinem Rechner gar nichts geht, z.B. Firmenrechner mit gesperrten Programmen |
 
 ### Weg A: Eigener Rechner
 
@@ -70,10 +70,13 @@ Hand installierst.
 
 | Programm | Noetig fuer | `setup` installiert ueber |
 |---|---|---|
-| Git | `/ref` und das Projekt. Unter Windows bringt es die Git Bash mit, die Claude Code braucht. | winget, brew, apt oder dnf |
-| Node.js 22 oder neuer (mit `npm`) | Die Uebungs-App bauen und testen | winget, brew, NodeSource |
-| Python 3.9 oder neuer | Installer und die Hooks im Modus `claude` | winget, brew, apt oder dnf |
+| Git | `/ref` und das Projekt. Unter Windows bringt es die Git Bash mit, die Claude Code braucht. | winget (pro Benutzer), brew, apt oder dnf |
+| Node.js 22 oder neuer (mit `npm`) | Die Uebungs-App bauen und testen | ZIP von nodejs.org nach `%LOCALAPPDATA%\Programs\nodejs` (Windows), brew, NodeSource |
+| Python 3.9 oder neuer | Installer und die Hooks im Modus `claude` | winget (pro Benutzer), brew, apt oder dnf |
 | Claude Code oder Codex CLI | Der Agent | offizieller Installer (Claude), npm (Codex) |
+
+Unter Windows braucht `setup` keine Admin-Rechte: alles landet im Benutzerordner und im
+Benutzer-PATH. Unter macOS und Linux fragen brew, apt und dnf nach dem Passwort.
 
 Unter Windows heisst der Befehl `python`, unter macOS und Linux `python3`. Oeffnet
 `python` unter Windows den Microsoft Store, ist Python nicht wirklich installiert. `setup`
