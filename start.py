@@ -41,6 +41,15 @@ def git_init(ziel: str) -> None:
     print("  angelegt: Git-Projekt")
 
 
+def kurzer_pfad(ziel: str) -> str:
+    """Relativ zum aktuellen Ordner, wenn moeglich. Unter Windows scheitert relpath,
+    wenn Ziel und aktueller Ordner auf verschiedenen Laufwerken liegen."""
+    try:
+        return os.path.relpath(ziel)
+    except ValueError:
+        return ziel
+
+
 def main(argv=None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if len(args) > 2:
@@ -58,7 +67,7 @@ def main(argv=None) -> int:
 
     print()
     print("Weiter im Terminal:")
-    print("  cd %s" % os.path.relpath(ziel))
+    print("  cd %s" % kurzer_pfad(ziel))
     if modus in AGENTEN:
         print("  %s" % modus)
     arbeitsblatt = "aufgabe-%s.md" % modus if modus in AGENTEN else "aufgabe.md"
