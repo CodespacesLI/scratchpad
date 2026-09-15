@@ -42,12 +42,13 @@ def git_init(ziel: str) -> None:
 
 
 def kurzer_pfad(ziel: str) -> str:
-    """Relativ zum aktuellen Ordner, wenn moeglich. Unter Windows scheitert relpath,
-    wenn Ziel und aktueller Ordner auf verschiedenen Laufwerken liegen."""
+    """Relativ zum aktuellen Ordner, wenn das Ziel darunter liegt, sonst absolut.
+    Unter Windows scheitert relpath, wenn die Laufwerke verschieden sind."""
     try:
-        return os.path.relpath(ziel)
+        relativ = os.path.relpath(ziel)
     except ValueError:
         return ziel
+    return ziel if relativ.startswith(os.pardir) else relativ
 
 
 def main(argv=None) -> int:
