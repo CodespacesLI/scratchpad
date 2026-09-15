@@ -6,14 +6,13 @@ des Programms selbst. Ohne Treiber schreibt eine Sitzung an der Kontext-Grenze b
 den Handoff-Brief und hoert auf; den Neustart macht der Mensch. Dieses Skript uebernimmt
 genau diesen Neustart: es startet headless Sitzungen (`claude -p`) nacheinander, erkennt
 das Sitzungs-Ende und reicht den Brief an eine frische Sitzung weiter — beliebig oft,
-bis der Auftrag fertig ist oder ein Abbruch-Kriterium greift. Hintergrund und
-Entscheidungen: `KONZEPT.md`, Kern-Entscheidungen 4 und 5.
+bis der Auftrag fertig ist oder ein Abbruch-Kriterium greift.
 
     python treiber.py auto "<auftrag>" [--projekt PFAD] [--max-runden N] [--modell M]
     python treiber.py status   [--projekt PFAD]
     python treiber.py stopp    [--projekt PFAD]     # Not-Aus: wirkt vor der naechsten Runde
 
-Mechanik (synchroner Loop, bewusst keine Staffel wie das curaops-Vorbild):
+Mechanik (synchroner Loop):
 
 1. Runde 1 bekommt den Auftrag plus Treiber-Vertrag; jede Sitzung laeuft mit
    `SCRATCHPAD_AUTO_HANDOFF=1`, der Kontext-Waechter erzwingt also den Brief.
@@ -110,7 +109,7 @@ def build_kommando(prompt: str, modell: str, claude_bin: str) -> list:
     """Das headless Sitzungs-Kommando. `--dangerously-skip-permissions` ist Pflicht:
     eine unbeaufsichtigte Sitzung kann keine Freigabe-Fragen beantworten, und Schreiben
     unter den Agenten-Ordner gilt als sensitive file, was auch Allow-Regeln nicht
-    aufheben (im curaops-Vorbild gemessen)."""
+    aufheben."""
     return [
         claude_bin, "-p", prompt,
         "--dangerously-skip-permissions",

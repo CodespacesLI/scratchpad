@@ -33,6 +33,7 @@ installiere_kern() {
   kopiere_ordner kern "$1/vorgehen"
   kopiere_datei vorlagen/tasks-README.md "$1/tasks/README.md"
   kopiere_datei agent/AGENTS-block.md "$1/INSTRUCTIONS.md"
+  kopiere_datei uebung/referenzen.md "$1/references/referenzen.md"
   ersetze_platzhalter "$1" "$2"
 }
 
@@ -52,7 +53,7 @@ case "$MODUS" in
     kopiere_ordner kern "$BASIS/vorgehen"; kopiere_ordner agent/commands "$BASIS/commands"; kopiere_ordner agent/skills "$BASIS/skills"
     mkdir -p "$BASIS/hooks"
     for datei in "$QUELLE"/hooks/*.py; do [ -e "$datei" ] || continue; case "$(basename "$datei")" in test_*.py) continue;; esac; cp "$datei" "$BASIS/hooks/"; done
-    kopiere_datei vorlagen/tasks-README.md "$BASIS/tasks/README.md"; kopiere_datei kern/antwortform.md "$BASIS/output-styles/scratchpad-projektleiter.md"
+    kopiere_datei vorlagen/tasks-README.md "$BASIS/tasks/README.md"; kopiere_datei kern/antwortform.md "$BASIS/output-styles/scratchpad-projektleiter.md"; kopiere_datei uebung/referenzen.md "$BASIS/references/referenzen.md"
     if [ -z "$PYTHON" ]; then echo "FEHLER: python3/python nicht gefunden." >&2; exit 1; fi
     [ -f "$BASIS/settings.json" ] || printf '{}\n' > "$BASIS/settings.json"
     "$PYTHON" "$QUELLE/install_settings.py" "$BASIS/settings.json" scratchpad-projektleiter "$QUELLE/agent/settings-hooks.json" .claude

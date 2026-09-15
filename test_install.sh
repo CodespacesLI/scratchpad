@@ -14,16 +14,22 @@ NEUTRAL="$WURZEL/neutral"; ausfuehren "$NEUTRAL" neutral
 datei "$NEUTRAL/.agents/vorgehen/01-brainstorm.md"; datei "$NEUTRAL/.agents/tasks/README.md"; datei "$NEUTRAL/.agents/INSTRUCTIONS.md"
 nicht_da "$NEUTRAL/.agents/skills"; nicht_da "$NEUTRAL/.claude"; nicht_da "$NEUTRAL/AGENTS.md"
 grep -q '<AGENTENORDNER>' "$NEUTRAL/.agents/INSTRUCTIONS.md" && fehler 'neutral: Platzhalter blieb stehen'
+datei "$NEUTRAL/.agents/references/referenzen.md"; datei "$NEUTRAL/.agents/vorgehen/referenzen-holen.md"
+grep -q 'Referenzen:' "$NEUTRAL/.agents/INSTRUCTIONS.md" || fehler 'neutral: Referenz-Einstieg fehlt in INSTRUCTIONS.md'
 
 CODEX="$WURZEL/codex"; mkdir -p "$CODEX"; printf '# Eigene Regeln\n\nNicht ueberschreiben.\n' > "$CODEX/AGENTS.md"
 ausfuehren "$CODEX" codex; ausfuehren "$CODEX" codex
 datei "$CODEX/.agents/vorgehen/03-build.md"; datei "$CODEX/.agents/tasks/README.md"; datei "$CODEX/.agents/INSTRUCTIONS.md"; datei "$CODEX/.agents/skills/grill-me/SKILL.md"
+datei "$CODEX/.agents/references/referenzen.md"; datei "$CODEX/.agents/vorgehen/referenzen-holen.md"
+grep -q 'referenzen-holen.md' "$CODEX/AGENTS.md" || fehler 'codex: Referenz-Einstieg fehlt in AGENTS.md'
 nicht_da "$CODEX/.claude"; grep -q 'Nicht ueberschreiben.' "$CODEX/AGENTS.md" || fehler 'codex: bestehende AGENTS.md-Inhalte verloren'
 [ "$(grep -Fc '<!-- scratchpad:start -->' "$CODEX/AGENTS.md")" = 1 ] || fehler 'codex: Scratchpad-Block nicht idempotent'
 
 CLAUDE="$WURZEL/claude"; mkdir -p "$CLAUDE/.claude"; printf '{"permissions":{"allow":["Bash(ls:*)"]}}' > "$CLAUDE/.claude/settings.json"
 ausfuehren "$CLAUDE" claude; ausfuehren "$CLAUDE" claude
 datei "$CLAUDE/.claude/vorgehen/01-brainstorm.md"; datei "$CLAUDE/.claude/commands/build.md"; datei "$CLAUDE/.claude/skills/grill-me/SKILL.md"; datei "$CLAUDE/.claude/hooks/guard_tdd.py"; datei "$CLAUDE/.claude/output-styles/scratchpad-projektleiter.md"; datei "$CLAUDE/.claude/tasks/README.md"
+datei "$CLAUDE/.claude/commands/ref.md"; datei "$CLAUDE/.claude/references/referenzen.md"; datei "$CLAUDE/.claude/vorgehen/referenzen-holen.md"
+grep -q '<AGENTENORDNER>' "$CLAUDE/.claude/commands/ref.md" "$CLAUDE/.claude/vorgehen/referenzen-holen.md" && fehler 'claude: Platzhalter blieb in Referenz-Dateien stehen'
 nicht_da "$CLAUDE/.agents"
 python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["permissions"]["allow"]==["Bash(ls:*)"] and d["outputStyle"]=="scratchpad-projektleiter" and "hooks" in d' "$CLAUDE/.claude/settings.json" || fehler 'claude: settings.json wurde nicht korrekt gemerged'
 

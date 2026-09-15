@@ -35,6 +35,7 @@ Abweichung in Schreibweise oder Wortwahl bricht ihn.
 - **Rolle:** backend | frontend | fullstack
 - **Files:** exakte Pfade, je mit (neu) oder (ändern)
 - **Wiederverwendung:** bestehende Bausteine, die genutzt werden
+- **Vorlage:** lokaler Pfad aus `<AGENTENORDNER>/references/INDEX.md`, der kopiert und angepasst wird, oder „—"
 - **Akzeptanz:** 1–3 testbare EARS-Kriterien „Wenn <Auslöser>, dann <Ergebnis>", jedes wird ein Test
 - **Test:** Testdatei + Kern-Assertion (der Test, der diesen Task rot→grün macht)
 - **Abhängig von:** Task-Nummern oder „—"
@@ -49,6 +50,9 @@ Abweichung in Schreibweise oder Wortwahl bricht ihn.
   „Formular validieren" nicht — es nennt weder Auslöser noch Ergebnis und lässt sich
   deshalb weder bauen noch widerlegen. Solche Sätze gehören in die EARS-Form
   umgeschrieben, bevor gebaut wird.
+- **Vorlage vor Neubau.** Nennt der Task eine Vorlage, wird die Datei kopiert und
+  zugeschnitten statt neu geschrieben (`<AGENTENORDNER>/vorgehen/referenzen-holen.md`,
+  Abschnitt „Regeln fuer das Kopieren“).
 - **Files ist eine Zusage.** Der Arbeiter ändert nur diese Dateien. Braucht er eine
   fremde, meldet er das unter OFFEN, statt sie anzufassen.
 - **Checkbox-Zustände:** `- [ ] offen` und `- [x] erledigt`, nichts anderes.

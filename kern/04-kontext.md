@@ -156,7 +156,7 @@ nichts zu editieren:**
 | `SCRATCHPAD_AUTO_HANDOFF=1` | Statt zu warnen, beendet der Wächter den Zug mit der Auflage, den Brief **jetzt** zu schreiben. Opt-in-Stufe für lange unbeaufsichtigte Läufe. |
 | `SCRATCHPAD_KONTEXT_BUDGET=<zahl>` | Senkt (oder hebt) die Schwelle. Default 150000; ein unbrauchbarer Wert fällt auf den Default zurück. |
 
-Zum Vorführen wird die Schwelle auf einen Wert gesenkt, den die laufende Sitzung längst
+Zum Ausprobieren wird die Schwelle auf einen Wert gesenkt, den die laufende Sitzung längst
 überschritten hat — dann feuert der Sensor im nächsten Zug:
 
 ```
@@ -168,24 +168,21 @@ $env:SCRATCHPAD_KONTEXT_BUDGET='20000'; claude
 $env:SCRATCHPAD_KONTEXT_BUDGET='20000'; $env:SCRATCHPAD_AUTO_HANDOFF='1'; claude
 ```
 
-## Die Grenze — ehrlich dazugesagt
+## Die Grenze
 
 **`/handoff`, `/clear` und `/resume` bleiben Handarbeit.** Ein Hook kann das Gespräch
 nicht leeren, keinen neuen Command starten und keine Nachfolge-Sitzung öffnen; er kann
 nur den laufenden Zug beenden und eine Auflage mitgeben. Auch mit
 `SCRATCHPAD_AUTO_HANDOFF=1` ist deshalb nur die **Auflage** automatisch, den Brief jetzt
-zu schreiben — getippt werden die drei Schritte vom Menschen. Das ist teils eine Grenze
-des Werkzeugs und teils Absicht, und beides wird in der Vorführung genannt statt
-verschwiegen.
+zu schreiben — getippt werden die drei Schritte vom Menschen.
 
-**Hinter der Grenze weiter:** wer stundenweise weggeht und den Zyklus trotzdem laufen
-lassen will, fährt ihn von **außerhalb** der Sitzung — `python treiber.py auto
-"<auftrag>"` startet headless Sitzungen nacheinander, erkennt Brief und Sitzungs-Ende
-und reicht den Brief an die nächste frische Sitzung weiter. Der Preis (Freigaben
-abgeschaltet) und die Not-Aus-Wege stehen im `README.md`, die Entscheidungen dahinter
-in `KONZEPT.md`, Kern-Entscheidungen 4 und 5.
+**Hinter der Grenze weiter:** wer den Zyklus unbeaufsichtigt laufen lassen will, fährt
+ihn von **außerhalb** der Sitzung — `python treiber.py auto "<auftrag>"` startet
+headless Sitzungen nacheinander, erkennt Brief und Sitzungs-Ende und reicht den Brief
+an die nächste frische Sitzung weiter. Die Sitzungen laufen dabei ohne Freigabe-Fragen;
+Not-Aus: `python treiber.py stopp`.
 
-Genauso ehrlich: der Sensor misst nur die **Grösse**, nicht die **Güte** des Kontexts.
+Der Sensor misst nur die **Grösse**, nicht die **Güte** des Kontexts.
 Ob die 140k voller nützlicher Entscheidungen oder voller verworfener Sackgassen sind,
 kann er nicht wissen. Deshalb warnt er und urteilt nicht.
 

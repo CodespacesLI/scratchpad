@@ -1,0 +1,306 @@
+# Uebung: Task-Board mit Codex
+
+Du baust mit Codex eine kleine Web-App. Du schreibst keinen Code selbst. Du sagst Codex,
+was es tun soll, und pruefst das Ergebnis.
+
+Zu jedem Schritt steht hier:
+
+- **Ziel:** Was am Ende da sein muss.
+- **Anfang der Nachricht:** Mit welchem Wort deine Nachricht beginnt.
+- **Das muss Codex wissen:** Was in deine Nachricht gehoert. Die Worte waehlst du selbst.
+- **Pruefe:** Woran du siehst, dass es geklappt hat.
+
+Passt ein Ergebnis nicht, sag Codex genau, was fehlt oder falsch ist. Auch das gehoert zur
+Uebung.
+
+## Was gebaut wird
+
+- Drei Spalten: Offen, In Arbeit, Fertig.
+- Eine Karte hat einen Titel, eine Beschreibung (optional) und eine Prioritaet.
+- Karten lassen sich mit der Maus und mit der Tastatur in eine andere Spalte verschieben.
+- Ein Klick auf eine Karte oeffnet ein Fenster (Dialog) zum Bearbeiten.
+- Filter nach Prioritaet und nach einem Wort im Titel.
+- Nach dem Neuladen der Seite ist alles noch da.
+- Eine leere Spalte zeigt einen Hinweis. Kaputte gespeicherte Daten zeigen eine Meldung.
+
+Nicht bauen: Login, Server, Synchronisation, eigene Spalten, Anhaenge, Kommentare,
+Termine, Sortieren innerhalb einer Spalte, Farbthemen, Handy-Ansicht, Veroeffentlichen.
+
+## Vorlagen: fertiger Code statt neu schreiben
+
+Fuer die schwierigen Teile gibt es fertigen, getesteten Code auf GitHub. Du musst ihn
+nicht suchen. Die Liste steht schon in `.agents/references/referenzen.md`:
+
+| Problem | Slug |
+|---|---|
+| Karten mit Maus und Tastatur zwischen Spalten verschieben | `dnd-kit` |
+| Dialog, Auswahlfeld, Eingabefelder | `shadcn` |
+| Daten im Browser speichern, kaputte Daten abfangen | `zustand` |
+| Unit-Tests einrichten | `vitest` |
+| Tests, die Elemente ueber Rolle und Namen finden | `testing-library` |
+| Automatische Browser-Tests | `playwright` |
+
+Du holst eine Vorlage erst, wenn du an das Problem kommst: beim Planen oder beim Bauen.
+
+**Anfang der Nachricht:** `Referenzen:`, dahinter ein oder mehrere Slugs mit Leerzeichen
+getrennt.
+
+Das passiert:
+
+1. Codex laedt nur die Dateien dieser Slugs von GitHub herunter.
+2. Die Dateien landen im Ordner `.agents/references/sources/`.
+3. Codex ergaenzt die Datei `.agents/references/INDEX.md`. Darin steht, welche Datei
+   wofuer die Vorlage ist.
+
+**Pruefe:** In der Antwort von Codex steht kein `FEHLT`.
+
+Warum: Fertigen Code zu kopieren und anzupassen geht schneller und macht weniger Fehler,
+als alles neu schreiben zu lassen.
+
+## 0. Vorbereiten
+
+### Voraussetzungen
+
+Auf deinem Rechner muss installiert sein:
+
+| Programm | Wofuer | Download |
+|---|---|---|
+| Git | Vorlagen herunterladen, Projekt versionieren | <https://git-scm.com> |
+| Node.js 22 oder neuer | Die App bauen und starten. Bringt `npm` mit. | <https://nodejs.org> |
+| Codex CLI | Der Agent. Einmal anmelden. | <https://github.com/openai/codex> |
+
+Pruefe im Terminal. Jede Zeile muss eine Versionsnummer zeigen:
+
+```text
+git --version
+node --version
+npm --version
+codex --version
+```
+
+### Projekt anlegen
+
+Windows:
+
+```text
+powershell -ExecutionPolicy Bypass -File C:\source\scratchpad\install.ps1 C:\projekte\task-board codex
+cd C:\projekte\task-board
+git init
+codex
+```
+
+Mac oder Linux:
+
+```text
+bash ~/scratchpad/install.sh ~/projekte/task-board codex
+cd ~/projekte/task-board
+git init
+codex
+```
+
+- Zeile 1 legt den Projektordner an und kopiert die Anleitungen fuer Codex hinein. Die
+  Datei `AGENTS.md` erklaert Codex die Woerter `Brainstorm:`, `Referenzen:`, `Plane:` und
+  `Baue:`.
+- Zeile 3 macht den Ordner zu einem Git-Projekt.
+- Zeile 4 startet Codex.
+
+**Wichtig:** Bleib von Schritt 1 bis Schritt 3 im selben Chat. Codex weiss nur, was im
+aktuellen Chat besprochen wurde.
+
+## 1. Anforderungen klaeren
+
+**Ziel:** Codex zeigt einen kurzen Brief, der die App beschreibt. Code gibt es in diesem
+Schritt noch nicht.
+
+**Anfang der Nachricht:** `Brainstorm:`
+
+**Das muss Codex wissen:**
+
+- Was die App koennen soll (Liste oben).
+- Was nicht gebaut wird.
+
+Codex stellt dir danach Fragen. Zu diesen drei Punkten musst du eine Entscheidung
+treffen. Fragt Codex nicht danach, bring sie selbst ein:
+
+- Was passiert, wenn eine Spalte sehr viele Karten hat?
+- Ein Filter ist aktiv und du verschiebst eine Karte. Was passiert?
+- Die App ist in zwei Browserfenstern gleichzeitig offen. Was passiert?
+
+**Pruefe:**
+
+- [ ] Codex zeigt einen Brief.
+- [ ] Deine drei Entscheidungen stehen darin.
+- [ ] Du hast Codex gesagt, dass der Brief so passt.
+
+## 2. Plan erstellen
+
+**Ziel:** In der Datei `.agents/tasks/board.md` steht eine Liste kleiner Aufgaben. Die
+schwierigen Aufgaben nennen eine Vorlage.
+
+**a) Schwierige Teile finden.** Lies deinen Brief. Welche Teile sind aufwendig, oder bei
+welchen weisst du nicht, wie man sie loest? Schau in der Tabelle „Vorlagen“ oben, ob es
+dafuer eine Vorlage gibt.
+
+**b) Diese Vorlagen holen.** Nachricht `Referenzen:` mit den Slugs, die du ausgesucht
+hast.
+
+**c) Plan schreiben lassen.** Anfang der Nachricht: `Plane:`
+
+**Das muss Codex wissen:**
+
+- Welcher Brief gilt: der aus Schritt 1 in diesem Chat.
+- Dass es `.agents/references/INDEX.md` lesen soll und passende Dateien bei den Aufgaben
+  als Vorlage eintragen soll.
+- Dass es dir einen Slug nennen soll, wenn fuer einen schwierigen Teil noch eine Vorlage
+  fehlt.
+- Wohin der Plan gespeichert wird: `.agents/tasks/board.md`.
+
+Nennt Codex einen fehlenden Slug, hol ihn mit `Referenzen: <slug>` und sag Codex, dass es
+weitermachen soll.
+
+**Pruefe:** Oeffne die Datei.
+
+- [ ] Jede Aufgabe hat 1 bis 3 Saetze der Form „Wenn ..., dann ...“.
+- [ ] Die schwierigen Aufgaben haben eine Zeile „Vorlage:“.
+- [ ] Deine drei Entscheidungen aus Schritt 1 stehen als „Wenn ..., dann ...“ im Plan.
+
+Stimmt alles, sag Codex, dass der Plan freigegeben ist.
+
+## 3. Bauen, Teil 1
+
+**Ziel:** Der erste Teil der App laeuft im Browser.
+
+**Anfang der Nachricht:** `Baue:`
+
+**Das muss Codex wissen:**
+
+- Welcher Plan gilt: `.agents/tasks/board.md`.
+- Was jetzt gebaut wird: Projekt anlegen, Board mit drei Spalten, Karten anlegen, Dialog
+  zum Bearbeiten, Speichern im Browser, Hinweis bei leerer Spalte.
+- Was noch **nicht** gebaut wird: Verschieben und Filter.
+
+**Haengt Codex an einem Problem?** Zum Beispiel: Ein Test wird nach mehreren Versuchen
+nicht gruen, oder Codex schreibt etwas selbst, wofuer die Tabelle „Vorlagen“ einen Slug
+hat. Dann:
+
+1. Hol die Vorlage mit `Referenzen: <slug>`.
+2. Schreib Codex eine Nachricht. **Das muss Codex wissen:** Welche Vorlage jetzt in
+   `.agents/references/INDEX.md` liegt, und dass es fuer dieses Problem die Vorlage
+   kopieren und anpassen soll.
+
+**Pruefe** in einem zweiten Terminal im Projektordner:
+
+- [ ] `npm test` zeigt am Ende keine roten Fehler.
+- [ ] `npm run dev` zeigt eine Adresse, meist `http://localhost:5173`. Oeffne sie im
+      Browser.
+- [ ] Du siehst drei Spalten und kannst eine Karte anlegen. Nach dem Neuladen ist sie
+      noch da.
+
+Gehen die beiden Befehle nicht, frag Codex, wie man Tests und App startet.
+
+## 4. Chat frisch starten
+
+**Ziel:** Ein neuer, leerer Chat, der trotzdem weiss, wo ihr steht.
+
+Warum: Ein langer Chat macht Codex langsamer und ungenauer.
+
+Codex hat dafuer keine fertigen Befehle. Du machst es in drei Schritten:
+
+1. **Nachricht.** Das muss Codex wissen: Es soll den aktuellen Stand in die Datei
+   `.agents/state/handoff-brief.md` schreiben. Wie das geht, steht in
+   `.agents/vorgehen/04-kontext.md`.
+2. **Befehl** `/new`: Codex startet einen neuen, leeren Chat.
+3. **Nachricht.** Das muss Codex wissen: Es soll `.agents/state/handoff-brief.md` lesen,
+   den Inhalt mit den echten Dateien und `git status` vergleichen und die naechste
+   offene Aufgabe nennen.
+
+**Pruefe:**
+
+- [ ] Codex nennt im neuen Chat die naechste offene Aufgabe.
+
+## 5. Bauen, Teil 2
+
+**Ziel:** Alle Aufgaben im Plan sind erledigt.
+
+**Anfang der Nachricht:** `Baue:`
+
+**Das muss Codex wissen:**
+
+- Welcher Plan gilt: `.agents/tasks/board.md`.
+- Was jetzt gebaut wird: alle restlichen offenen Aufgaben, also Verschieben mit der
+  Maus, Verschieben mit der Tastatur, Filter und das Verhalten bei vielen Karten.
+
+Haengt Codex an einem Problem, gehst du vor wie in Schritt 3.
+
+**Pruefe:**
+
+- [ ] In `.agents/tasks/board.md` ist jede Aufgabe abgehakt (`[x]`) oder durchgestrichen
+      und hat einen Grund dabei.
+
+## 6. Abnahme
+
+**Ziel:** Jeder Punkt unten funktioniert. Du pruefst selbst im Browser, Code lesen
+zaehlt nicht.
+
+Starte vorher im zweiten Terminal `npm test` und `npm run dev`.
+
+- [ ] 1. Beim ersten Oeffnen sind die Spalten Offen, In Arbeit und Fertig zu sehen.
+- [ ] 2. Eine leere Spalte zeigt einen Text und einen Knopf zum Anlegen einer Karte.
+- [ ] 3. Eine neue Karte erscheint unten in der gewaehlten Spalte.
+- [ ] 4. Beim Ziehen mit der Maus ist vorher zu sehen, wo die Karte landet. Sie landet
+      unten in der Zielspalte.
+- [ ] 5. Tastatur: Tab waehlt eine Karte. Leertaste nimmt sie auf. Pfeiltasten wechseln
+      die Spalte. Leertaste legt sie ab.
+- [ ] 6. Im Dialog lassen sich Titel, Beschreibung und Prioritaet aendern. Schliesst du
+      ihn mit ungespeicherten Aenderungen, fragt die App nach.
+- [ ] 7. Prioritaetsfilter und Wortfilter wirken gleichzeitig. Die Spaltenueberschriften
+      bleiben sichtbar.
+- [ ] 8. Nach dem Neuladen sind alle Karten in derselben Spalte und Reihenfolge.
+- [ ] 9. Kaputte gespeicherte Daten zeigen ein leeres Board mit einer verstaendlichen
+      Meldung. So testest du das: Browser-Entwicklertools oeffnen (F12), Reiter
+      „Application“, Local Storage, den Wert durch `kaputt` ersetzen, Seite neu laden.
+- [ ] 10. Deine drei Entscheidungen aus Schritt 1 funktionieren so, wie du sie
+      beschrieben hast.
+
+**Geht ein Punkt nicht,** schreib Codex eine Nachricht.
+
+**Das muss Codex wissen:**
+
+- Welcher Punkt nicht geht.
+- Was du genau siehst.
+- Dass zuerst ein Test den Fehler zeigen soll und erst danach repariert wird.
+
+## 7. Optional: automatische Browser-Tests
+
+Nur wenn noch Zeit ist.
+
+**Ziel:** Automatische Browser-Tests fuer die Punkte unten laufen ohne Fehler.
+
+**a) Vorlage holen.** Fuer Browser-Tests gibt es eine Vorlage. Hol sie jetzt, weil du
+jetzt an dieses Problem kommst: `Referenzen: playwright`.
+
+**b) Tests schreiben lassen.** Eine normale Nachricht, kein festes Wort am Anfang.
+
+**Das muss Codex wissen:**
+
+- Dass es Playwright-Tests schreiben und ausfuehren soll.
+- Welche Punkte getestet werden (Liste unten).
+- Dass es die Playwright-Vorlage aus `.agents/references/INDEX.md` nutzen soll.
+- Dass es gefundene Fehler behebt, aber keine neuen Funktionen baut.
+
+Punkte:
+
+1. Beim Tippen im Dialog bleibt der Cursor im richtigen Feld.
+2. Jede Karte zeigt im Dialog ihre eigenen Werte, auch nach dem Wechsel zu einer anderen
+   Karte.
+3. Verschieben geht mit Tab, Leertaste und Pfeiltasten. Ein unsichtbarer Text fuer
+   Screenreader meldet jeden Schritt.
+4. Alle Knoepfe, Felder und der Dialog haben einen Namen fuer Screenreader.
+5. Der Fokus bleibt im offenen Dialog und springt beim Schliessen zurueck zur Karte.
+6. Beim Anlegen, Verschieben, Bearbeiten und Filtern erscheinen keine Fehler in der
+   Browser-Konsole.
+
+**Pruefe:**
+
+- [ ] Codex meldet, dass alle Tests ohne Fehler durchlaufen.
+- [ ] Du hast die App danach noch einmal selbst im Browser angeschaut.

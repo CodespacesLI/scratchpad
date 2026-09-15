@@ -7,6 +7,7 @@ liest die passende Datei und folgst ihr woertlich.
 | Der Nutzer sagt | Du liest und befolgst |
 |---|---|
 | `Brainstorm: ...` | `<AGENTENORDNER>/vorgehen/01-brainstorm.md` |
+| `Referenzen: ...` / `Hole Referenzen` | `<AGENTENORDNER>/vorgehen/referenzen-holen.md` |
 | `Plane: ...` | `<AGENTENORDNER>/vorgehen/02-plan.md` |
 | `Baue: ...` / `Baue den Plan` | `<AGENTENORDNER>/vorgehen/03-build.md`, **Modus B** |
 | „mein Kontext wird voll" / lange Sitzung | `<AGENTENORDNER>/vorgehen/04-kontext.md` |
@@ -78,12 +79,13 @@ Feste Regeln, die ueber allem stehen:
 
 ### Was Modus A zusaetzlich hat
 
-In einem Werkzeug mit Sub-Agenten und Hooks (heute Claude Code) kommen sechs Commands
+In einem Werkzeug mit Sub-Agenten und Hooks (heute Claude Code) kommen sieben Commands
 und vier Waechter dazu:
 
 | Command | Wofuer |
 |---|---|
 | `/brainstorm` | fragt die Idee auseinander, bevor geplant wird |
+| `/ref` | holt die festen Referenz-Repositories per Git als Kopiervorlage |
 | `/plan` | macht aus dem Brief einen freigabefertigen Plan, mit Gegenleser |
 | `/build` | baut den Plan mit parallelen Arbeitern ab |
 | `/loop` | schaerft den fertigen Unterschied nach, bis zwei saubere Runden in Folge |

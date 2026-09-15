@@ -34,7 +34,7 @@ bis zum letzten Prompt des Menschen) — sonst blockte die Auflage genau den Tur
 erfüllt.
 
 Schwelle per `SCRATCHPAD_KONTEXT_BUDGET` (ganze Zahl) überschreibbar; kaputter Wert →
-Konstante. Für eine Vorführung lässt sich die Schwelle damit in einer Terminal-Zeile auf
+Konstante. Zum Ausprobieren lässt sich die Schwelle damit in einer Terminal-Zeile auf
 z.B. 20000 senken.
 
 STILL (exit 0) ausserdem: `stop_hook_active` (Loop-Schutz), Subagenten-Stop (die Auflage

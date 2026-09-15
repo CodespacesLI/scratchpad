@@ -13,6 +13,11 @@ freigibt. Dieser Schritt schreibt Plan-Prosa, keinen Produktivcode.
 2. Den Code durchsuchen, statt zu raten: Welche Bausteine gibt es schon (Ansichten,
    Dienste, Datenzugriffe)? Welches ähnliche Feature ist die Referenz? **Wiederverwenden
    schlägt neu bauen.**
+3. Vorlagen prüfen: Für jeden schwierigen Teil (z. B. Drag-and-Drop, Dialog, Speichern)
+   schaust du in `<AGENTENORDNER>/references/referenzen.md`, ob es einen Eintrag gibt. Steht
+   er schon in `<AGENTENORDNER>/references/INDEX.md`, wird er die Vorlage des Tasks. Fehlt
+   er dort, nennst du dem User den Slug (`/ref <slug>` oder `Referenzen: <slug>`) und
+   wartest, bis er geholt ist. **Kopieren schlägt neu schreiben.**
 
 > Modus A: Diese Suche gehört in einen Lese-Arbeiter, der nur die Fundstellen
 > (Pfad + ein Satz, wofür) zurückgibt, nicht die Datei-Inhalte. Modus B: selbst suchen,
@@ -78,7 +83,8 @@ getroffene Entscheidungen je eine Zeile; offene Punkte für den User.
 
 **Zone 3: atomare Tasks** im Format aus `<AGENTENORDNER>/vorgehen/task-format.md`. Jeder
 Task ist so geschnitten, dass ein Arbeiter ihn unbeaufsichtigt abarbeiten kann: eigene
-Files-Liste, eigene Akzeptanzkriterien, eigener Test. Tasks ohne offene Abhängigkeit
+Files-Liste, eigene Akzeptanzkriterien, eigener Test und, falls der Referenz-Index eine
+hat, eine Vorlage. Tasks ohne offene Abhängigkeit
 dürfen später parallel laufen. Deshalb müssen ihre Files-Listen disjunkt sein
 (`<AGENTENORDNER>/vorgehen/rollen.md`).
 
