@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Selbsttest fuer guard_tdd.py — Aufruf: `python test_guard_tdd.py`.
+
+Reine asserts, kein Test-Framework. Der Wächter arbeitet auf dem Change-Set eines
+Arbeitsverzeichnisses; die Tests legen dafür je ein Wegwerf-Repo im Temp-Verzeichnis an
+(nie im echten Projekt). Deckt ab: Kernfall (Logik ohne Test blockt), Normalbetrieb
+(Logik mit passendem Test bleibt still), Fingerprint-Dedupe und die fail-open-Pfade.
+"""
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
+HOOK = os.path.join(HOOKS_DIR, "guard_tdd.py")
+
+sys.path.insert(0, HOOKS_DIR)
+import guard_tdd  # noqa: E402  (erst nach dem sys.path-Eintrag importierbar)
+
+# Aus dem Wächter gelesen, nicht abgeschrieben: der Installer ersetzt den
+# Agenten-Ordner beim Kopieren, der Test muss trotzdem stimmen.
+FP_REL = guard_tdd.FP_DEFAULT
+
+
+def make_repo(tmp: str) -> str:
+    """Wegwerf-Repo im Temp-Verzeichnis (nur dort wird git angefasst)."""
+    repo = os.path.join(tmp, "repo")
+    os.makedirs(repo, exist_ok=True)
+    subprocess.run(["git", "init", "-q"], cwd=repo, capture_output=True,
+                   text=True, timeout=15)
+    return repo
+
+
+def add_file(repo: str, rel: str, content: str = "x = 1\n") -> None:
+    path = os.path.join(repo, rel)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(content)
+
+
+def run_hook(repo: str, raw_stdin=None, hook=HOOK, **payload_extra):
+    payload = {"stop_hook_active": False, "session_id": "s"}
+    payload.update(payload_extra)
+    data = raw_stdin if raw_stdin is not None else json.dumps(payload)
+    # Feste UTF-8-Dekodierung: der Wächter schreibt seine Meldung in UTF-8.
+    return subprocess.run([sys.executable, hook], input=data, capture_output=True,
+                          encoding="utf-8", errors="replace", timeout=20, cwd=repo)
+
+
+def install_harness(repo: str, agent_dir: str, with_util: bool = True) -> str:
+    """Kopiert die Wächter wie der Installer nach `<repo>/<agent_dir>/hooks/`.
+
+    Wie im Feld nach `start.py`: die Dateien liegen untracked im Repo, ohne Commit.
+    Gibt den Pfad des kopierten `guard_tdd.py` zurück.
+    """
+    ziel = os.path.join(repo, agent_dir, "hooks")
+    os.makedirs(ziel, exist_ok=True)
+    for name in sorted(os.listdir(HOOKS_DIR)):
+        if not name.endswith(".py") or name.startswith("test_"):
+            continue
+        if name == "hook_util.py" and not with_util:
+            continue
+        shutil.copyfile(os.path.join(HOOKS_DIR, name), os.path.join(ziel, name))
+    return os.path.join(ziel, "guard_tdd.py")
+
+
+def fremde_codepage_env() -> dict:
+    """Umgebung, in der Python seine Standard-Ströme NICHT in UTF-8 schreibt.
+
+    Nachgestellt wird Windows: stderr läuft dort ohne Zutun in der Landes-Codepage
+    (cp1252), Claude Code liest aber UTF-8. Erzwungen per Variable, damit der Fall auf
+    jedem Betriebssystem reproduzierbar ist.
+    """
+    env = dict(os.environ)
+    env["PYTHONIOENCODING"] = "cp1252"
+    env["PYTHONUTF8"] = "0"
+    return env
+
+
+def test_logic_without_test_blocks(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    proc = run_hook(repo)
+    assert proc.returncode == 2, f"Logik ohne Test muss blocken, war {proc.returncode}"
+    assert "src/service.py" in proc.stderr, proc.stderr
+
+
+def test_logic_with_matching_test_passes(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    add_file(repo, "src/test_service.py", "def test_compute():\n    assert compute() == 42\n")
+    proc = run_hook(repo)
+    assert proc.returncode == 0, f"Logik mit Test muss still bleiben: {proc.stderr}"
+
+
+def test_unrelated_test_does_not_cover(tmp):
+    """Ein Test irgendwo im Change-Set deckt nicht jede beliebige Logik-Datei."""
+    repo = make_repo(tmp)
+    add_file(repo, "backend/billing/rechnung.py", "def summe():\n    return 1\n")
+    add_file(repo, "frontend/ui/knopf.test.ts", "it('x', () => { expect(1).toBe(1) })\n")
+    proc = run_hook(repo)
+    assert proc.returncode == 2, "unverwandter Test darf die Logik nicht decken"
+    assert "rechnung.py" in proc.stderr, proc.stderr
+
+
+def test_exempt_paths_stay_silent(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "db/migrations/001_init.py", "SQL = 'x'\n")
+    add_file(repo, "vite.config.ts", "export default {}\n")
+    add_file(repo, "docs/anleitung.md", "# Text\n")
+    proc = run_hook(repo)
+    assert proc.returncode == 0, f"Migration/Config/Doku sind keine Logik: {proc.stderr}"
+
+
+def test_fingerprint_dedupe_silences_second_turn(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    first = run_hook(repo)
+    assert first.returncode == 2, "erster Lauf muss warnen"
+    assert os.path.isfile(os.path.join(repo, FP_REL)), \
+        f"Fingerprint gehört nach {FP_REL}"
+    second = run_hook(repo)
+    assert second.returncode == 0, "unveränderte Liste darf nicht erneut nerven"
+
+
+def test_changed_uncovered_list_warns_again(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    assert run_hook(repo).returncode == 2
+    add_file(repo, "src/andere.py", "def x():\n    return 1\n")
+    proc = run_hook(repo)
+    assert proc.returncode == 2, "neue ungedeckte Datei muss wieder warnen"
+
+
+def test_loop_guard_and_subagent_stay_silent(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    assert run_hook(repo, stop_hook_active=True).returncode == 0, "Loop-Schutz fehlt"
+    assert run_hook(repo, agent_id="a1").returncode == 0, "Subagent-Stop muss still sein"
+
+
+def test_broken_stdin_fails_open(tmp):
+    repo = make_repo(tmp)
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    proc = run_hook(repo, raw_stdin="{kein json")
+    assert proc.returncode == 0, f"kaputtes stdin muss fail-open sein: {proc.returncode}"
+    assert "Traceback" not in proc.stderr, proc.stderr
+
+
+def test_harness_ordner_blockt_nicht(tmp):
+    """Die eigenen, noch untracked Wächter-Dateien sind Werkzeug, keine Produkt-Logik."""
+    for agent_dir in (".claude", ".agents"):
+        repo = make_repo(os.path.join(tmp, agent_dir.strip(".")))
+        hook = install_harness(repo, agent_dir)
+        proc = run_hook(repo, hook=hook)
+        assert proc.returncode == 0, (
+            f"Harness unter {agent_dir}/ darf nicht blocken: {proc.stderr}")
+
+
+def test_produkt_logik_neben_harness_blockt_weiter(tmp):
+    repo = make_repo(tmp)
+    hook = install_harness(repo, ".claude")
+    add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+    proc = run_hook(repo, hook=hook)
+    assert proc.returncode == 2, f"Produkt-Logik ohne Test muss blocken: {proc.returncode}"
+    assert "src/service.py" in proc.stderr, proc.stderr
+    assert ".claude/hooks" not in proc.stderr, proc.stderr
+
+
+def test_agenten_ordner_nur_auf_wurzel_ebene_ausgenommen(tmp):
+    """Ein gleichnamiger Ordner tiefer im Baum ist Produktcode, kein Harness."""
+    repo = make_repo(tmp)
+    hook = install_harness(repo, ".claude")
+    add_file(repo, "pakete/.claude/hooks/werkzeug.py", "def x():\n    return 1\n")
+    proc = run_hook(repo, hook=hook)
+    assert proc.returncode == 2, f"tieferer .claude/-Ordner muss geprüft werden: {proc.stderr}"
+    assert "pakete/.claude/hooks/werkzeug.py" in proc.stderr, proc.stderr
+
+
+def test_meldung_ist_utf8_auch_unter_fremder_codepage(tmp):
+    """Umlaute kommen als gültiges UTF-8 an — mit und ohne hook_util daneben."""
+    for with_util in (True, False):
+        repo = make_repo(os.path.join(tmp, "mit" if with_util else "ohne"))
+        hook = install_harness(repo, ".claude", with_util=with_util)
+        add_file(repo, "src/service.py", "def compute():\n    return 42\n")
+        proc = subprocess.run([sys.executable, hook], input=b'{"session_id": "s"}',
+                              capture_output=True, timeout=20, cwd=repo,
+                              env=fremde_codepage_env())
+        assert proc.returncode == 2, f"muss blocken (hook_util={with_util}): {proc.stderr!r}"
+        try:
+            text = proc.stderr.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise AssertionError(
+                f"stderr ist kein UTF-8 (hook_util={with_util}): {exc}; {proc.stderr[:80]!r}")
+        assert "Logik-Änderung" in text and "grün" in text, text
+
+
+TESTS = [
+    test_logic_without_test_blocks,
+    test_logic_with_matching_test_passes,
+    test_unrelated_test_does_not_cover,
+    test_exempt_paths_stay_silent,
+    test_fingerprint_dedupe_silences_second_turn,
+    test_changed_uncovered_list_warns_again,
+    test_loop_guard_and_subagent_stay_silent,
+    test_broken_stdin_fails_open,
+    test_harness_ordner_blockt_nicht,
+    test_produkt_logik_neben_harness_blockt_weiter,
+    test_agenten_ordner_nur_auf_wurzel_ebene_ausgenommen,
+    test_meldung_ist_utf8_auch_unter_fremder_codepage,
+]
+
+
+def main() -> int:
+    failures = []
+    for test in TESTS:
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                test(tmp)
+        except Exception as exc:
+            failures.append(f"FAIL {test.__name__}: {exc}")
+        else:
+            print(f"ok   {test.__name__}")
+    for line in failures:
+        print(line, file=sys.stderr)
+    print(f"\n{len(TESTS) - len(failures)}/{len(TESTS)} passed")
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

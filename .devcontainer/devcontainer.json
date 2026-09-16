@@ -1,0 +1,19 @@
+{
+  "name": "scratchpad",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "node",
+  "mounts": [
+    "source=scratchpad-claude,target=/home/node/.claude,type=volume",
+    "source=scratchpad-codex,target=/home/node/.codex,type=volume"
+  ],
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": { "label": "Task-Board (npm run dev)", "onAutoForward": "notify" }
+  },
+  "containerEnv": {
+    // Codespaces ruft den Dev-Server ueber *.app.github.dev auf; Vite blockt fremde
+    // Hostnamen sonst mit "Blocked request".
+    "__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS": ".app.github.dev"
+  },
+  "postCreateCommand": "bash setup.sh pruefen"
+}
