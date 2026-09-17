@@ -1,14 +1,14 @@
 # Uebung: Task-Board mit Claude Code
 
-Du baust mit Claude Code eine kleine Web-App. Du schreibst keinen Code selbst. Du sagst
-Claude, was es tun soll, und pruefst das Ergebnis.
+Du baust mit Claude Code eine kleine Web-App. Den Code schreibt Claude. Du sagst Claude,
+was es tun soll, und pruefst das Ergebnis.
 
 So arbeitest du mit diesem Blatt:
 
-- Jeder Schritt hat nummerierte Unterschritte. Mach sie der Reihe nach.
+- Jeder Schritt hat nummerierte Unterschritte. Bearbeite sie der Reihe nach.
 - Deine Nachrichten an Claude schreibst du selbst. Fest steht nur der Befehl am Anfang,
   zum Beispiel `/plan`. Alles dahinter formulierst du in eigenen Worten.
-- Die Liste „Deine Nachricht enthaelt:“ sagt dir, was in deine Nachricht hinein muss.
+- Die Liste „Deine Nachricht enthaelt:“ nennt, was in deine Nachricht gehoert.
   Schick die Nachricht mit Enter ab.
 - Passt ein Ergebnis nicht, sag Claude genau, was fehlt oder falsch ist.
 
@@ -25,17 +25,18 @@ So arbeitest du mit diesem Blatt:
 Nicht bauen: Login, Server, Synchronisation, eigene Spalten, Anhaenge, Kommentare,
 Termine, Sortieren innerhalb einer Spalte, Farbthemen, Handy-Ansicht, Veroeffentlichen.
 
-## Vorlagen: fertiger Code statt neu schreiben
+## Vorlagen fuer die schwierigen Teile
 
-Fuer die schwierigen Teile gibt es fertigen, getesteten Code auf GitHub. Welchen du davon
-nutzt, entscheidest du schon in Schritt 1 beim Klaeren der Anforderungen: Claude fragt dich
-danach, und du waehlst die Slugs aus der Tabelle unten. Direkt danach, in Schritt 2, laedst
-du den Code mit `/ref <slug>` herunter. Claude nutzt ihn spaeter beim Bauen, statt alles neu
-zu schreiben. Das geht schneller, und der Code ist schon getestet.
+Fuer die schwierigen Teile gibt es fertigen, getesteten Code auf GitHub. Claude baut diese
+Teile spaeter mit diesem Code. Das spart Zeit.
 
-Bei uns funktioniert `/ref` nur eingeschraenkt: Es kennt nur die Slugs aus der Tabelle
-unten, und was genau aus dem jeweiligen Repository geholt wird, ist vordefiniert. Die
-Tabelle steht auch in `.claude/references/referenzen.md`.
+In Schritt 1, Anforderungen klaeren, fragt Claude dich nach Vorlagen. Du waehlst dann die
+Slugs aus der Tabelle unten. In Schritt 2, Vorlagen holen, laedst du den Code mit
+`/ref <slug>` herunter.
+
+Im Kurs kennt `/ref` nur die Slugs aus der Tabelle unten. Welche Dateien es aus einem
+Repository holt, ist fest vorgegeben. Die Tabelle steht auch in
+`.claude/references/referenzen.md`.
 
 So laeuft `/ref <slug>` ab:
 
@@ -45,9 +46,9 @@ So laeuft `/ref <slug>` ab:
 3. `/plan` schaut gleich zu Beginn in `INDEX.md` nach und weiss so bei jedem Problem, wo
    es dafuer fertigen Code gibt.
 
-Im echten Leben wuerde Claude die geholten Dateien selbst lesen und die Erklaerung selbst
-schreiben. Bei uns steht sie schon fest, damit keine ganzen Repositories geladen werden
-und der Index bei allen gleich ist.
+Ausserhalb des Kurses wuerde Claude die geholten Dateien selbst lesen und die Erklaerung
+selbst schreiben. Im Kurs steht sie schon fest, damit keine ganzen Repositories geladen
+werden und der Index bei allen gleich ist.
 
 | Problem | Slug |
 |---|---|
@@ -79,13 +80,13 @@ Waehle einen Weg. Einzelheiten stehen in der [README](../README.md#schnellstart)
 4. Schliesse das Terminal und oeffne ein neues.
 
 **Dev Container oder Codespaces.** Alles ist schon installiert. Oeffne das Repo im
-Container und nimm dort das Terminal.
+Container und oeffne dort ein Terminal.
 
 ### Projekt anlegen
 
 1. Oeffne ein Terminal im Ordner `scratchpad`.
-2. Tippe diese drei Zeilen nacheinander. Unter Mac und Linux heisst die erste Zeile
-   `python3` statt `python`.
+2. Tippe diese drei Zeilen nacheinander. Unter Mac und Linux beginnt die erste Zeile mit
+   `python3`.
 
    ```text
    python start.py claude
@@ -95,7 +96,7 @@ Container und nimm dort das Terminal.
 
    Zeile 1 legt den Ordner `task-board` an und kopiert die Anleitungen fuer Claude hinein.
    Zeile 2 wechselt in diesen Ordner. Zeile 3 startet Claude.
-3. Beim ersten Start meldest du dich einmal an.
+3. Melde dich beim ersten Start einmal an.
 
 **Wichtig:** Bleib von Schritt 1 bis Schritt 4 im selben Chat. Claude weiss nur, was im
 aktuellen Chat besprochen wurde. Einen frischen Chat startest du nur in Schritt 4, wenn
@@ -116,13 +117,11 @@ Code gibt es noch nicht.
      - Ein Filter ist aktiv und du verschiebst eine Karte. Was passiert?
      - Die App ist in zwei Browserfenstern gleichzeitig offen. Was passiert?
 
-2. Warte auf Claudes Fragen. Beantworte jede Frage in eigenen Worten. Zu den drei Punkten
-   triffst du selbst eine Entscheidung. Fragt Claude nicht danach, bring sie selbst ein.
-3. Claude fragt dich auch, ob es fuer die schwierigen Teile schon fertigen Code gibt. Such
-   fuer jeden schwierigen Teil in der Tabelle „Vorlagen“ das passende Problem. Automatische
-   Browser-Tests (`playwright`) waehlst du hier nicht, die kommen erst im optionalen
-   Schritt 6. Fragt Claude nicht nach fertigem Code, bring es selbst ein. Schreib Claude
-   eine Nachricht.
+2. Warte auf die Fragen von Claude. Beantworte jede Frage in eigenen Worten. Triff zu jedem der
+   drei Punkte selbst eine Entscheidung und schreib Claude alle drei Entscheidungen.
+3. Such fuer jeden schwierigen Teil in der Tabelle „Vorlagen“ das passende Problem. Lass
+   `playwright` fuer den optionalen Schritt 6 aus. Claude fragt dich nach fertigem Code fuer
+   die schwierigen Teile. Schreib Claude dazu eine Nachricht.
 
    **Deine Nachricht enthaelt:**
    - Jeden Slug, den du gewaehlt hast.
@@ -163,7 +162,7 @@ schwierigen Aufgaben nennen eine Vorlage.
    - [ ] Jede Aufgabe hat 1 bis 3 Saetze der Form „Wenn ..., dann ...“.
    - [ ] Die schwierigen Aufgaben haben eine Zeile „Vorlage:“.
    - [ ] Deine drei Entscheidungen aus Schritt 1 stehen als „Wenn ..., dann ...“ im Plan.
-4. Stimmt alles, schreib Claude, dass der Plan freigegeben ist.
+4. Passt der Plan, schreib Claude, dass er freigegeben ist.
 
 ## 4. Bauen
 
@@ -181,22 +180,22 @@ schwierigen Aufgaben nennen eine Vorlage.
 > [!WARNING]
 > **Wann startest du einen frischen Chat?** In einem langen Chat wird Claude schon ab etwa
 > 100 000 Tokens spuerbar ungenauer, lange bevor der Chat technisch voll ist. Deshalb
-> wechselst du schon bei rund 120 000 Tokens in eine frische Sitzung. Der Spielraum sorgt
-> dafuer, dass Claude die laufende Aufgabe noch sauber fertig baut. Die frische Sitzung
-> uebernimmt den Stand aus einer Datei. Das ist Context Engineering in einfacher Form.
-> Du musst dafuer nicht selbst hinschauen. Ein Waechter zaehlt nach jedem Zug von Claude
-> die Tokens mit und meldet sich bei rund 120 000 Tokens. Claude laesst dann die
-> laufenden Aufgaben fertig werden, beginnt keine neuen, beendet den Zug und sagt dir,
-> dass jetzt der Zyklus dran ist. Tippe dann nacheinander diese Befehle, jeden erst, wenn
-> Claude mit dem vorigen fertig ist:
+> wechselst du schon bei rund 120 000 Tokens in einen frischen Chat. Mit diesem Abstand
+> baut Claude die laufende Aufgabe noch sauber fertig. Der frische Chat uebernimmt den
+> Stand aus einer Datei. Das ist Context Engineering in einfacher Form.
+> Ein Waechter zaehlt fuer dich nach jedem Zug von Claude die Tokens mit und meldet sich
+> bei rund 120 000 Tokens. Claude laesst dann die laufenden Aufgaben fertig werden und
+> beginnt keine neuen. Danach beendet Claude den Zug und sagt dir, dass jetzt der Zyklus
+> dran ist. Tippe dann nacheinander diese Befehle und warte nach jedem, bis Claude fertig
+> ist:
 >
 > 1. `/handoff`. Claude schreibt den Stand in die Datei `.claude/state/handoff-brief.md`.
-> 2. `/clear`. Der Chat wird geleert.
+> 2. `/clear`. Der Chat ist danach leer.
 > 3. `/resume`. Claude liest die Datei, vergleicht sie mit den Dateien im Projekt und nennt
 >    die naechste offene Aufgabe.
 > 4. `/build .claude/tasks/board.md`. Claude macht bei der ersten offenen Aufgabe weiter.
 >
-> Danach wartest du wieder, bis Claude meldet, dass es fertig ist.
+> Warte danach wieder, bis Claude meldet, dass es fertig ist.
 
 3. Oeffne ein zweites Terminal im Ordner `task-board`. Tippe `npm test`. Pruefe:
    - [ ] Am Ende stehen keine roten Fehler.
@@ -214,8 +213,8 @@ schwierigen Aufgaben nennen eine Vorlage.
 
 ## 5. Abnahme
 
-**Ziel:** Jeder Punkt unten funktioniert. Du pruefst selbst im Browser, Code lesen
-zaehlt nicht.
+**Ziel:** Jeder Punkt unten funktioniert. Es zaehlt nur, was du selbst im Browser
+pruefst.
 
 1. Tippe im zweiten Terminal `npm test`, danach `npm run dev`. Oeffne die App im Browser.
 2. Pruefe jeden Punkt:
@@ -232,8 +231,9 @@ zaehlt nicht.
          Spaltenueberschriften bleiben sichtbar.
    - [ ] 8. Nach dem Neuladen sind alle Karten in derselben Spalte und Reihenfolge.
    - [ ] 9. Kaputte gespeicherte Daten zeigen ein leeres Board mit einer verstaendlichen
-         Meldung. So testest du das: Browser-Entwicklertools oeffnen (F12), Reiter
-         „Application“, Local Storage, den Wert durch `kaputt` ersetzen, Seite neu laden.
+         Meldung. So testest du das: Oeffne die Browser-Entwicklertools (F12). Klicke
+         auf den Reiter „Application“ und dann auf Local Storage. Ersetze den Wert durch
+         `kaputt` und lade die Seite neu.
    - [ ] 10. Deine drei Entscheidungen aus Schritt 1 funktionieren so, wie du sie
          beschrieben hast.
 3. Geht ein Punkt nicht, schreib Claude eine Nachricht.
@@ -241,29 +241,28 @@ zaehlt nicht.
    **Deine Nachricht enthaelt:**
    - Welcher Abnahmepunkt nicht geht (die Nummer).
    - Was du genau siehst.
-   - **Dass Claude zuerst einen Test schreibt, der den Fehler zeigt, und ihn erst danach
-     behebt** (Test Driven Development).
+   - Dass Claude zuerst einen Test schreibt, der den Fehler zeigt, und den Fehler erst
+     danach behebt (Test Driven Development).
 
 4. Pruefe den Punkt danach noch einmal im Browser.
 
 ## 6. Optional: automatische Browser-Tests
 
-Nur wenn noch Zeit ist.
+Bearbeite diesen Schritt nur, wenn noch Zeit ist.
 
 **Ziel:** Automatische Browser-Tests fuer sechs Punkte laufen ohne Fehler.
 
-1. Das Playwright-Repository auf GitHub enthaelt fertige Beispiel-Tests fuer eine
-   Todo-App: Eintraege anlegen, bearbeiten und filtern, fast wie bei deinem Task-Board.
-   `/ref playwright` holt genau diese Beispiele als Vorlage herunter, nicht Playwright
-   selbst. Tippe `/ref playwright`. Warte, bis Claude fertig ist. In der Antwort darf kein
-   `FEHLT` stehen.
-2. Schreib Claude eine Nachricht. Hier steht kein Befehl am Anfang.
+1. Tippe `/ref playwright`. Der Befehl holt als Vorlage nur die fertigen Beispiel-Tests
+   aus dem Playwright-Repository auf GitHub. Die Beispiele testen, wie eine Todo-App
+   Eintraege anlegt, bearbeitet und filtert. Diese drei Funktionen hat dein Task-Board
+   auch. Warte, bis Claude fertig ist. In der Antwort darf kein `FEHLT` stehen.
+2. Schreib Claude eine Nachricht ohne Befehl am Anfang.
 
    **Deine Nachricht enthaelt:**
    - Dass Claude Playwright-Tests fuer die sechs Punkte unten schreiben und ausfuehren
      soll.
    - Dass es die Playwright-Vorlage aus `.claude/references/INDEX.md` nutzen soll.
-   - Dass es gefundene Fehler behebt, aber keine neuen Funktionen baut.
+   - Dass es gefundene Fehler behebt und **keine** neuen Funktionen baut.
 
    Die sechs Punkte:
    1. Beim Tippen im Dialog bleibt der Cursor im richtigen Feld.
@@ -278,4 +277,4 @@ Nur wenn noch Zeit ist.
 
 3. Warte, bis Claude fertig ist. Pruefe:
    - [ ] Claude meldet, dass alle Tests ohne Fehler durchlaufen.
-4. Schau dir die App danach noch einmal selbst im Browser an.
+4. Pruefe die App danach noch einmal selbst im Browser.
